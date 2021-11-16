@@ -14,8 +14,21 @@ jobs:
       with:
         name: luet-github-action
         github-token: '${{ secrets.GITHUB_TOKEN }}'
+        email: mudler@mocaccino.org
+        desc: "Github Action for building luet packages and repositories"
+        install: "docker,wget,curl,jq"
+        icon: "box"
+        color: purple
     - name: Test
       uses: ./
       with:
-        tree: packages
+        # tree: packages
         build: true
+    - name: Test
+      uses: ./
+      with:
+        # tree: packages
+        createRepo: true
+    - name: "Check files were built"
+      run: |
+            ls -liah build/
