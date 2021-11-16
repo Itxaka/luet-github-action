@@ -2,14 +2,10 @@
 
 
 FROM golang:1.14.2-alpine3.11
-RUN apk add git 
+RUN apk add git docker wget curl jq
 
 COPY . /home/src
 WORKDIR /home/src
-
-RUN curl https://get.mocaccino.org/luet/get_luet_root.sh | sh
-RUN luet install -y utils/jq
-
 RUN go build -o /bin/action ./
 
 ENTRYPOINT [ "/bin/action" ]
