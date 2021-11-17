@@ -72,6 +72,8 @@ var pullRepository = os.Getenv("PULL_REPOSITORY")
 
 func main() {
 	flag.Parse()
+
+	finalRepo = strings.ToLower(finalRepo)
 	//	utils.RunSH("dependencies", "apk add curl")
 	//	utils.RunSH("dependencies", "apk add docker")
 	//	utils.RunSH("dependencies", "apk add jq")
