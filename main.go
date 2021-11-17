@@ -217,7 +217,7 @@ func build() {
 		}
 	}
 
-	checkErr(utils.RunSH("build perms", "chmod -R 777 "+*outputdir))
+	utils.RunSH("build perms", "chmod -R 777 "+*outputdir)
 }
 
 func buildPackage(s string) {
