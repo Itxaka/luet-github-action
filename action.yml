@@ -79,6 +79,15 @@ inputs:
   PULL_REPOSITORY:
     description: "Optional pull cache repository"
     required: false
+  DOCKER_USERNAME:
+    description: "Docker username to log into"
+    required: false
+  DOCKER_PASSWORD:
+    description: "Docker password to log into"
+    required: false
+  DOCKER_ENDPOINT:
+    description: "Optional docker endpoint, e.g. quay.io"
+    required: false
 runs:
   using: docker
   image: Dockerfile
@@ -88,6 +97,9 @@ runs:
     REPOSITORY_NAME: "${{ inputs.REPOSITORY_NAME }}"
     REPOSITORY_TYPE: "${{ inputs.REPOSITORY_TYPE }}"
     PULL_REPOSITORY: "${{ inputs.PULL_REPOSITORY }}"
+    DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
+    DOCKER_PASSWORD: "${{ inputs.DOCKER_PASSWORD }}"
+    DOCKER_ENDPOINT: "${{ inputs.DOCKER_ENDPOINT }}"
   args:
   - "-build=${{ inputs.build }}"
   - "-downloadMeta=${{ inputs.downloadMeta }}"
