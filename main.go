@@ -70,6 +70,15 @@ var repositoryType = os.Getenv("REPOSITORY_TYPE")
 //goaction:description Optional pull cache repository
 var pullRepository = os.Getenv("PULL_REPOSITORY")
 
+//goaction:description Docker username to log into
+var dockerUsername = os.Getenv("DOCKER_USERNAME")
+
+//goaction:description Docker password to log into
+var dockerPassword = os.Getenv("DOCKER_PASSWORD")
+
+//goaction:description Optional docker endpoint, e.g. quay.io
+var dockerEndpoint = os.Getenv("DOCKER_ENDPOINT")
+
 func main() {
 	flag.Parse()
 
@@ -82,6 +91,17 @@ func main() {
 	utils.RunSH("dependencies", "mv luet /usr/bin/luet && mkdir -p /etc/luet/repos.conf.d/")
 	utils.RunSH("dependencies", "curl -L https://raw.githubusercontent.com/mocaccinoOS/repository-index/master/packages/luet.yml --output /etc/luet/repos.conf.d/luet.yml")
 	utils.RunSH("dependencies", "luet install -y system/luet")
+
+	if dockerUsername != "" && dockerPassword != "" {
+		out, err := utils.RunSHOUT("login", fmt.Sprintf(
+			"echo %s | docker login -u %s --password-stdin %s",
+			dockerPassword, dockerUsername, dockerEndpoint),
+		)
+		if err != nil {
+			fmt.Println(string(out))
+			os.Exit(1)
+		}
+	}
 
 	switch {
 	case *buildPackages:
