@@ -38,6 +38,7 @@ var downloadAll = flag.Bool("downloadAllMeta", false, "Download All packages met
 var downloadFromList = flag.Bool("downloadFromList", false, "Download All packages metadata by listing all available image tags")
 
 var fromIndex = flag.Bool("fromIndex", false, "Download metadata from index")
+var buildx = flag.Bool("buildx", false, "Use docker buildx")
 
 var createRepo = flag.Bool("createRepo", false, "create repository")
 var onlyMissing = flag.Bool("onlyMissing", false, "Build only missing packages")
@@ -46,6 +47,7 @@ var pushFinalImages = flag.Bool("pushFinalImages", false, "Pushing final images 
 var pushFinalImagesRepository = flag.String("pushFinalImagesRepository", "", "Specify a different final repo")
 
 var tree = flag.String("tree", "${PWD}/packages", "create repository")
+var platform = flag.String("platform", "", "buildx platform")
 
 var luetVersion = flag.String("luetVersion", "0.20.10", "default Luet version")
 var arch = flag.String("luetArch", "amd64", "default Luet arch")
@@ -88,6 +90,15 @@ func main() {
 	//	utils.RunSH("dependencies", "apk add jq")
 	utils.RunSH("dependencies", "curl -L https://github.com/mudler/luet/releases/download/"+*luetVersion+"/luet-"+*luetVersion+"-linux-"+*arch+" --output luet")
 	utils.RunSH("dependencies", "chmod +x luet")
+
+	if *buildx {
+		utils.RunSH("dependencies", "curl -L https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64 --output docker-buildx")
+		utils.RunSH("dependencies", "chmod a+x docker-buildx")
+		utils.RunSH("dependencies", "mkdir -p ~/.docker/cli-plugins")
+		utils.RunSH("dependencies", "mv docker-buildx ~/.docker/cli-plugins")
+		utils.RunSH("dependencies", "docker buildx install")
+	}
+
 	utils.RunSH("dependencies", "mv luet /usr/bin/luet && mkdir -p /etc/luet/repos.conf.d/")
 	utils.RunSH("dependencies", "curl -L https://raw.githubusercontent.com/mocaccinoOS/repository-index/master/packages/luet.yml --output /etc/luet/repos.conf.d/luet.yml")
 	utils.RunSH("dependencies", "luet install -y system/luet")
@@ -258,6 +269,15 @@ func buildPackage(s string) {
 
 	if *push {
 		args = append(args, "--push")
+	}
+
+	if *buildx {
+		args = append(args, "--backend-args", "--load")
+	}
+
+	if *platform != "" {
+		args = append(args, "--backend-args", "--platform")
+		args = append(args, "--backend-args", *platform)
 	}
 
 	if *values != "" {
