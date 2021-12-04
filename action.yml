@@ -23,6 +23,10 @@ inputs:
     default: false
     description: "Download metadata from index"
     required: false
+  buildx:
+    default: false
+    description: "Use docker buildx"
+    required: false
   createRepo:
     default: false
     description: "create repository"
@@ -45,6 +49,9 @@ inputs:
   tree:
     default: ${PWD}/packages
     description: "create repository"
+    required: false
+  platform:
+    description: "buildx platform"
     required: false
   luetVersion:
     default: 0.20.10
@@ -106,12 +113,14 @@ runs:
   - "-downloadAllMeta=${{ inputs.downloadAllMeta }}"
   - "-downloadFromList=${{ inputs.downloadFromList }}"
   - "-fromIndex=${{ inputs.fromIndex }}"
+  - "-buildx=${{ inputs.buildx }}"
   - "-createRepo=${{ inputs.createRepo }}"
   - "-onlyMissing=${{ inputs.onlyMissing }}"
   - "-pushCache=${{ inputs.pushCache }}"
   - "-pushFinalImages=${{ inputs.pushFinalImages }}"
   - "-pushFinalImagesRepository=${{ inputs.pushFinalImagesRepository }}"
   - "-tree=${{ inputs.tree }}"
+  - "-platform=${{ inputs.platform }}"
   - "-luetVersion=${{ inputs.luetVersion }}"
   - "-luetArch=${{ inputs.luetArch }}"
   - "-values=${{ inputs.values }}"
