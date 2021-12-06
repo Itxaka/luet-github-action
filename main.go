@@ -97,6 +97,7 @@ func main() {
 		utils.RunSH("dependencies", "mkdir -p ~/.docker/cli-plugins")
 		utils.RunSH("dependencies", "mv docker-buildx ~/.docker/cli-plugins")
 		utils.RunSH("dependencies", "docker buildx install")
+		utils.RunSH("dependencies", "docker run --privileged --rm tonistiigi/binfmt --install all")
 	}
 
 	utils.RunSH("dependencies", "mv luet /usr/bin/luet && mkdir -p /etc/luet/repos.conf.d/")
