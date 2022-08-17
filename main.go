@@ -106,7 +106,7 @@ func main() {
 
 	if dockerUsername != "" && dockerPassword != "" {
 		out, err := utils.RunSHOUT("login", fmt.Sprintf(
-			"echo %s | docker login -u %s --password-stdin %s",
+			"echo %s | docker login -u '%s' --password-stdin '%s'",
 			dockerPassword, dockerUsername, dockerEndpoint),
 		)
 		if err != nil {
