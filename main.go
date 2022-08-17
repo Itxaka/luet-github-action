@@ -243,7 +243,7 @@ func build() {
 	}
 
 	for _, p := range packs.Packages {
-		if (*onlyMissing && !p.ImageAvailable(finalRepo) || !*onlyMissing) &&
+		if ((*onlyMissing && !p.ImageAvailable(finalRepo)) || !*onlyMissing) &&
 			(currentPackage != "" && p.EqualSV(currentPackage) || currentPackage == "") {
 			buildPackage(p.String())
 		}
