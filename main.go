@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -54,6 +55,8 @@ var platform = flag.String("platform", "", "buildx platform")
 var luetVersion = flag.String("luetVersion", "0.20.10", "default Luet version")
 var arch = flag.String("luetArch", "amd64", "default Luet arch")
 var values = flag.String("values", "", "Values file")
+
+var maxMetadataDownloads = flag.String("maxMetadataDownloads", "5", "How many metadata to download in parallel")
 
 var outputdir = flag.String("output", "${PWD}/build", "output where to store packages")
 
@@ -391,7 +394,11 @@ func downloadMeta() {
 			}
 
 			var wg sync.WaitGroup
-			semaphore := make(chan struct{}, 10)
+			value, err := strconv.Atoi(*maxMetadataDownloads)
+			if err != nil {
+				value = 5
+			}
+			semaphore := make(chan struct{}, value)
 			metaErrors := make(chan error, len(metadata))
 			for _, m := range metadata {
 				meta := m
