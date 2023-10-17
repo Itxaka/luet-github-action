@@ -29,7 +29,9 @@ type resultData struct {
 
 // The action can:
 // 1: Build packages. Singularly (by specifying CURRENT_PACKAGE), or all of them.
-//   (TODO:  implement  select  build only missing)
+//
+//	(TODO:  implement  select  build only missing)
+//
 // 2: Download metadata for a given tree/repository
 // 3: Create repository
 var buildPackages = flag.Bool("build", false, "Build missing packages, or specified")
@@ -380,12 +382,38 @@ func downloadMeta() {
 		if *downloadFromList {
 			tags, err := imageTags(finalRepo)
 			checkErr(err)
+			var metadata []string
+
 			for _, t := range tags {
 				if strings.HasSuffix(t, ".metadata.yaml") {
-					img := fmt.Sprintf("%s:%s", finalRepo, t)
-					fmt.Println("Downloading", img)
-					checkErr(downloadImage(img, *outputdir))
+					metadata = append(metadata, t)
 				}
+			}
+
+			var wg sync.WaitGroup
+			metaErrors := make(chan error, len(metadata))
+			for _, m := range metadata {
+				meta := m
+				wg.Add(1)
+				go func(m string) {
+					defer wg.Done()
+					img := fmt.Sprintf("%s:%s", finalRepo, m)
+					fmt.Println("Downloading start", img)
+					err := downloadImage(img, *outputdir)
+					fmt.Println("Downloading finished", img)
+					metaErrors <- err
+				}(meta)
+			}
+
+			wg.Wait()
+
+			// Check for errors
+			select {
+			case v, ok := <-metaErrors:
+				if ok {
+					checkErr(v)
+				}
+			default:
 			}
 			return
 		}
