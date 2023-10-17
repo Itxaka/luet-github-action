@@ -95,6 +95,10 @@ inputs:
   DOCKER_ENDPOINT:
     description: "Optional docker endpoint, e.g. quay.io"
     required: false
+  maxMetadataDownloads:
+    default: 5
+    description: "Max metadata downloads in parallel"
+    required: false
 runs:
   using: docker
   image: Dockerfile

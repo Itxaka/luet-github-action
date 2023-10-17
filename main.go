@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -29,7 +30,9 @@ type resultData struct {
 
 // The action can:
 // 1: Build packages. Singularly (by specifying CURRENT_PACKAGE), or all of them.
-//   (TODO:  implement  select  build only missing)
+//
+//	(TODO:  implement  select  build only missing)
+//
 // 2: Download metadata for a given tree/repository
 // 3: Create repository
 var buildPackages = flag.Bool("build", false, "Build missing packages, or specified")
@@ -52,6 +55,8 @@ var platform = flag.String("platform", "", "buildx platform")
 var luetVersion = flag.String("luetVersion", "0.20.10", "default Luet version")
 var arch = flag.String("luetArch", "amd64", "default Luet arch")
 var values = flag.String("values", "", "Values file")
+
+var maxMetadataDownloads = flag.String("maxMetadataDownloads", "5", "How many metadata to download in parallel")
 
 var outputdir = flag.String("output", "${PWD}/build", "output where to store packages")
 
@@ -380,12 +385,45 @@ func downloadMeta() {
 		if *downloadFromList {
 			tags, err := imageTags(finalRepo)
 			checkErr(err)
+			var metadata []string
+
 			for _, t := range tags {
 				if strings.HasSuffix(t, ".metadata.yaml") {
-					img := fmt.Sprintf("%s:%s", finalRepo, t)
-					fmt.Println("Downloading", img)
-					checkErr(downloadImage(img, *outputdir))
+					metadata = append(metadata, t)
 				}
+			}
+
+			var wg sync.WaitGroup
+			value, err := strconv.Atoi(*maxMetadataDownloads)
+			if err != nil {
+				value = 5
+			}
+			semaphore := make(chan struct{}, value)
+			metaErrors := make(chan error, len(metadata))
+			for _, m := range metadata {
+				meta := m
+				semaphore <- struct{}{}
+				wg.Add(1)
+				go func(m string) {
+					defer wg.Done()
+					img := fmt.Sprintf("%s:%s", finalRepo, m)
+					fmt.Println("Downloading start", img)
+					err := downloadImage(img, *outputdir)
+					fmt.Println("Downloading finished", img)
+					metaErrors <- err
+					<-semaphore
+				}(meta)
+			}
+
+			wg.Wait()
+
+			// Check for errors
+			select {
+			case v, ok := <-metaErrors:
+				if ok {
+					checkErr(v)
+				}
+			default:
 			}
 			return
 		}
