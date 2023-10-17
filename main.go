@@ -391,7 +391,7 @@ func downloadMeta() {
 			}
 
 			var wg sync.WaitGroup
-			semaphore := make(chan struct{}, 5)
+			semaphore := make(chan struct{}, 10)
 			metaErrors := make(chan error, len(metadata))
 			for _, m := range metadata {
 				meta := m
