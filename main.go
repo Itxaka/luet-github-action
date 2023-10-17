@@ -391,9 +391,11 @@ func downloadMeta() {
 			}
 
 			var wg sync.WaitGroup
+			semaphore := make(chan struct{}, 5)
 			metaErrors := make(chan error, len(metadata))
 			for _, m := range metadata {
 				meta := m
+				semaphore <- struct{}{}
 				wg.Add(1)
 				go func(m string) {
 					defer wg.Done()
@@ -402,6 +404,7 @@ func downloadMeta() {
 					err := downloadImage(img, *outputdir)
 					fmt.Println("Downloading finished", img)
 					metaErrors <- err
+					<-semaphore
 				}(meta)
 			}
 
