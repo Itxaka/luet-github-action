@@ -75,6 +75,10 @@ inputs:
   skipPackages:
     description: "A space separated list of packages to skip"
     required: false
+  revisionSHA:
+    default: false
+    description: "Revision SHA"
+    required: false
   FINAL_REPO:
     description: "Final container registry repository"
     required: false
@@ -99,10 +103,8 @@ inputs:
   DOCKER_ENDPOINT:
     description: "Optional docker endpoint, e.g. quay.io"
     required: false
-  revisionSHA:
-    description: "Use git SHA for repo revision (otherwise uses the date)"
+  GITHUB_SHA:
     required: false
-    default: false
 runs:
   using: docker
   image: Dockerfile
@@ -115,6 +117,7 @@ runs:
     DOCKER_USERNAME: "${{ inputs.DOCKER_USERNAME }}"
     DOCKER_PASSWORD: "${{ inputs.DOCKER_PASSWORD }}"
     DOCKER_ENDPOINT: "${{ inputs.DOCKER_ENDPOINT }}"
+    GITHUB_SHA: "${{ inputs.GITHUB_SHA }}"
   args:
   - "-build=${{ inputs.build }}"
   - "-downloadMeta=${{ inputs.downloadMeta }}"
