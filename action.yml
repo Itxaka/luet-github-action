@@ -99,6 +99,10 @@ inputs:
   DOCKER_ENDPOINT:
     description: "Optional docker endpoint, e.g. quay.io"
     required: false
+  revisionSHA:
+    description: "Use git SHA for repo revision (otherwise uses the date)"
+    required: false
+    default: false
 runs:
   using: docker
   image: Dockerfile
@@ -131,6 +135,7 @@ runs:
   - "-maxMetadataDownloads=${{ inputs.maxMetadataDownloads }}"
   - "-output=${{ inputs.output }}"
   - "-skipPackages=${{ inputs.skipPackages }}"
+  - "-revisionSHA=${{ inputs.revisionSHA }}"
 branding:
   icon: box
   color: purple
