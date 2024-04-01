@@ -62,6 +62,8 @@ var outputdir = flag.String("output", "${PWD}/build", "output where to store pac
 
 var skipPackages = flag.String("skipPackages", "", "A space separated list of packages to skip")
 
+var revisionSHA = flag.Bool("revisionSHA", false, "Revision SHA")
+
 //goaction:description Final container registry repository
 var finalRepo = os.Getenv("FINAL_REPO")
 
@@ -193,23 +195,17 @@ func buildWorker(i int, wg *sync.WaitGroup, c <-chan luetClient.Package, o opDat
 }
 
 func create() {
+	cmd := fmt.Sprintf("luet create-repo --name '%s' --packages %s --tree %s --output %s", repositoryName, *outputdir, *tree, *outputdir)
 	if *push {
-		utils.RunSH(
-			"create_repo",
-			fmt.Sprintf(
-				"luet create-repo --name '%s' --packages %s --tree %s --push-images --type docker 	--output %s",
-				repositoryName, *outputdir, *tree, finalRepo,
-			),
-		)
+		cmd = cmd + " --push-images --type docker"
 	} else {
-		utils.RunSH(
-			"create_repo",
-			fmt.Sprintf(
-				"luet create-repo --name '%s' --packages %s --tree %s --type http --output %s",
-				repositoryName, *outputdir, *tree, *outputdir,
-			),
-		)
+		cmd = cmd + " --type http"
 	}
+
+	if *revisionSHA {
+		cmd = cmd + " --snapshot-id " + os.Getenv("GITHUB_SHA")
+	}
+	utils.RunSH("create_repo", cmd)
 }
 
 func build() {
