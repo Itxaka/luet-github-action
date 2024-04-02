@@ -205,7 +205,7 @@ func create() {
 	if *revisionSHA {
 		out, err := utils.RunSHOUT("date", "date +%Y%m%d%H%M%S")
 		checkErr(err)
-		cmd = cmd + " --snapshot-id " + out + "-git" + os.Getenv("GITHUB_SHA")
+		cmd = cmd + " --snapshot-id " + string(out) + "-git" + os.Getenv("GITHUB_SHA")
 	}
 	utils.RunSH("create_repo", cmd)
 }
