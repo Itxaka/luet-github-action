@@ -203,7 +203,7 @@ func create() {
 	}
 
 	if *revisionSHA {
-		out, err := utils.RunSHOUT("date", "date +%Y%m%d")
+		out, err := utils.RunSHOUT("date", "date +%Y%m%d%H%M")
 		checkErr(err)
 		date := strings.TrimSpace(string(out))
 		githubSHA := os.Getenv("GITHUB_SHA")
@@ -213,7 +213,7 @@ func create() {
 			// Slice the first 8 characters
 			shortSHA = githubSHA[:8]
 		}
-		cmd = cmd + " --snapshot-id " + date + "-" + shortSHA
+		cmd = cmd + " --snapshot-id " + date + "-git" + shortSHA
 	}
 	utils.RunSH("create_repo", cmd)
 }
