@@ -203,7 +203,7 @@ func create() {
 	}
 
 	if *revisionSHA {
-		out, err := utils.RunSHOUT("date", "date +%Y%m%d%H")
+		out, err := utils.RunSHOUT("date", "date +%Y%m%d")
 		checkErr(err)
 		date := strings.TrimSpace(string(out))
 		githubSHA := os.Getenv("GITHUB_SHA")
