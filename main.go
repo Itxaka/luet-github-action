@@ -203,7 +203,7 @@ func create() {
 	}
 
 	if *revisionSHA {
-		cmd = cmd + " --snapshot-id " + os.Getenv("GITHUB_SHA")
+		cmd = cmd + " --snapshot-id $(date +%Y%m%d%H%M%S)-git" + os.Getenv("GITHUB_SHA")
 	}
 	utils.RunSH("create_repo", cmd)
 }
