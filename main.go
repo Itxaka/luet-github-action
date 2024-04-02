@@ -213,7 +213,7 @@ func create() {
 			// Slice the first 8 characters
 			shortSHA = githubSHA[:8]
 		}
-		cmd = cmd + " --snapshot-id " + + "-git" + shortSHA
+		cmd = cmd + " --snapshot-id " + date + "-git" + shortSHA
 	}
 	utils.RunSH("create_repo", cmd)
 }
