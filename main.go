@@ -205,7 +205,14 @@ func create() {
 	if *revisionSHA {
 		out, err := utils.RunSHOUT("date", "date +%Y%m%d%H%M%S")
 		checkErr(err)
-		cmd = cmd + " --snapshot-id " + string(out) + "-git" + os.Getenv("GITHUB_SHA")
+		githubSHA := os.Getenv("GITHUB_SHA")
+		shortSHA := githubSHA
+		// Check if the string length is at least 8 characters
+		if len(githubSHA) >= 8 {
+			// Slice the first 8 characters
+			shortSHA = githubSHA[:8]
+		}
+		cmd = cmd + " --snapshot-id " + string(out) + "-git" + shortSHA
 	}
 	utils.RunSH("create_repo", cmd)
 }
