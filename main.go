@@ -195,11 +195,11 @@ func buildWorker(i int, wg *sync.WaitGroup, c <-chan luetClient.Package, o opDat
 }
 
 func create() {
-	cmd := fmt.Sprintf("luet create-repo --name '%s' --packages %s --tree %s --output %s", repositoryName, *outputdir, *tree, *outputdir)
+	cmd := fmt.Sprintf("luet create-repo --name '%s' --packages %s --tree %s ", repositoryName, *outputdir, *tree)
 	if *push {
-		cmd = cmd + " --push-images --type docker"
+		cmd = cmd + fmt.Sprintf("--output %s --push-images --type docker", finalRepo)
 	} else {
-		cmd = cmd + " --type http"
+		cmd = cmd + fmt.Sprintf("--output %s --type http", *outputdir)
 	}
 
 	if *revisionSHA {
