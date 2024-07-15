@@ -107,7 +107,7 @@ inputs:
     required: false
 runs:
   using: docker
-  image: Dockerfile
+  image: 'docker://ttl.sh/itxakaluet'
   env:
     FINAL_REPO: "${{ inputs.FINAL_REPO }}"
     CURRENT_PACKAGE: "${{ inputs.CURRENT_PACKAGE }}"
