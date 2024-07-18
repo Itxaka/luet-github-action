@@ -195,7 +195,7 @@ func buildWorker(i int, wg *sync.WaitGroup, c <-chan luetClient.Package, o opDat
 }
 
 func create() {
-	cmd := fmt.Sprintf("luet create-repo --name '%s' --packages %s --tree %s ", repositoryName, *outputdir, *tree)
+	cmd := fmt.Sprintf("luet create-repo --name '%s' --packages %s --tree %s --from-metadata ", repositoryName, *outputdir, *tree)
 	if *push {
 		cmd = cmd + fmt.Sprintf("--output %s --push-images --type docker", finalRepo)
 	} else {
