@@ -214,6 +214,8 @@ func create() {
 			shortSHA = githubSHA[:8]
 		}
 		cmd = cmd + " --snapshot-id " + date + "-git" + shortSHA
+		err = utils.RunSH("exportOutput", fmt.Sprintf("echo \"LUET_PUSHED_REPO=%s-git%s\" >> \"$GITHUB_OUTPUT\"", date, shortSHA))
+		checkErr(err)
 	}
 	utils.RunSH("create_repo", cmd)
 }
