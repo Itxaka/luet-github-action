@@ -213,8 +213,7 @@ func create() {
 			// Slice the first 8 characters
 			shortSHA = githubSHA[:8]
 		}
-		utils.RunSHOUT(fmt.SprintF('echo "LUET_PUSHED_REPO=%s-git%s" >> "$GITHUB_OUTPUT"', date, shortSHA))
-		os.SetEnv("
+		utils.RunSHOUT("whatever", fmt.Sprintf("echo \"LUET_PUSHED_REPO=%s-git%s\" >> \"$GITHUB_OUTPUT\"", date, shortSHA))
 		cmd = cmd + " --snapshot-id " + date + "-git" + shortSHA
 	}
 	utils.RunSH("create_repo", cmd)
