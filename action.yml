@@ -52,7 +52,6 @@ inputs:
     required: false
   platform:
     description: "buildx platform"
-    default: false
     required: false
   luetVersion:
     default: 0.20.10
