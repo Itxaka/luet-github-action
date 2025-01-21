@@ -109,7 +109,6 @@ func main() {
 
 	utils.RunSH("dependencies", "mv luet /usr/bin/luet && mkdir -p /etc/luet/repos.conf.d/")
 	utils.RunSH("dependencies", "curl -L https://raw.githubusercontent.com/mocaccinoOS/repository-index/master/packages/luet.yml --output /etc/luet/repos.conf.d/luet.yml")
-	utils.RunSH("dependencies", "luet install -y system/luet")
 
 	if dockerUsername != "" && dockerPassword != "" {
 		out, err := utils.RunSHOUT("login", fmt.Sprintf(
