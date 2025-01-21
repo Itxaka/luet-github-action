@@ -41,6 +41,7 @@ var downloadAll = flag.Bool("downloadAllMeta", false, "Download All packages met
 var downloadFromList = flag.Bool("downloadFromList", false, "Download All packages metadata by listing all available image tags")
 
 var fromIndex = flag.Bool("fromIndex", false, "Download metadata from index")
+var buildx = flag.Bool("buildx", false, "Use docker buildx")
 
 var createRepo = flag.Bool("createRepo", false, "create repository")
 var onlyMissing = flag.Bool("onlyMissing", false, "Build only missing packages")
@@ -96,6 +97,15 @@ func main() {
 	//	utils.RunSH("dependencies", "apk add jq")
 	utils.RunSH("dependencies", "curl -L https://github.com/mudler/luet/releases/download/"+*luetVersion+"/luet-"+*luetVersion+"-linux-"+*arch+" --output luet")
 	utils.RunSH("dependencies", "chmod +x luet")
+
+	if *buildx {
+		utils.RunSH("dependencies", "curl -L https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64 --output docker-buildx")
+		utils.RunSH("dependencies", "chmod a+x docker-buildx")
+		utils.RunSH("dependencies", "mkdir -p ~/.docker/cli-plugins")
+		utils.RunSH("dependencies", "mv docker-buildx ~/.docker/cli-plugins")
+		utils.RunSH("dependencies", "docker buildx install")
+		utils.RunSH("dependencies", "docker run --privileged --rm tonistiigi/binfmt --install all")
+	}
 
 	utils.RunSH("dependencies", "mv luet /usr/bin/luet && mkdir -p /etc/luet/repos.conf.d/")
 	utils.RunSH("dependencies", "curl -L https://raw.githubusercontent.com/mocaccinoOS/repository-index/master/packages/luet.yml --output /etc/luet/repos.conf.d/luet.yml")
@@ -274,8 +284,7 @@ func buildPackage(s string) {
 		args = append(args, "--push")
 	}
 
-	err := utils.RunSH("check-for-buildx", "docker buildx inspect")
-	if err == nil { // buildx is available
+	if *buildx {
 		args = append(args, "--backend-args", "--load")
 	}
 
