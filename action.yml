@@ -23,10 +23,6 @@ inputs:
     default: false
     description: "Download metadata from index"
     required: false
-  buildx:
-    default: false
-    description: "Use docker buildx"
-    required: false
   createRepo:
     default: false
     description: "create repository"
@@ -124,7 +120,6 @@ runs:
   - "-downloadAllMeta=${{ inputs.downloadAllMeta }}"
   - "-downloadFromList=${{ inputs.downloadFromList }}"
   - "-fromIndex=${{ inputs.fromIndex }}"
-  - "-buildx=${{ inputs.buildx }}"
   - "-createRepo=${{ inputs.createRepo }}"
   - "-onlyMissing=${{ inputs.onlyMissing }}"
   - "-pushCache=${{ inputs.pushCache }}"
