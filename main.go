@@ -102,7 +102,7 @@ func main() {
 	utils.RunSH("dependencies", "chmod +x luet")
 
 	if *buildx {
-		utils.RunSH("dependencies", "curl -L https://github.com/docker/buildx/releases/download/v0.20.0/buildx-v0.20.0.linux-amd64 --output docker-buildx")
+		utils.RunSH("dependencies", "curl -L https://github.com/docker/buildx/releases/download/v0.21.1/buildx-v0.21.1.linux-"+*arch+" --output docker-buildx")
 		utils.RunSH("dependencies", "chmod a+x docker-buildx")
 		utils.RunSH("dependencies", "mkdir -p ~/.docker/cli-plugins")
 		utils.RunSH("dependencies", "mv docker-buildx ~/.docker/cli-plugins")
