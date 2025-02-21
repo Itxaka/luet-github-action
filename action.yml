@@ -25,7 +25,7 @@ inputs:
     required: false
   buildx:
     default: false
-    description: "Use docker buildx"
+    description: "Install docker buildx"
     required: false
   createRepo:
     default: false
